@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"sync/atomic"
-	"fmt"
 )
 
 type apiConfig struct {
@@ -38,15 +38,15 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.StripPrefix("/app/", http.FileServer(http.Dir(".")))))
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /api/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
 
-	mux.HandleFunc("GET /metrics", apiCfg.getHits)
+	mux.HandleFunc("GET /api/metrics", apiCfg.getHits)
 
-	mux.HandleFunc("POST /reset", apiCfg.reset)
+	mux.HandleFunc("POST /api/reset", apiCfg.reset)
 
 	server := &http.Server{
 		Addr:   ":" + port,
