@@ -29,6 +29,7 @@ func (cfg *apiConfig) handlerCreateUser (w http.ResponseWriter, r *http.Request)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode request body", err)
 		return
 	}
+	defer r.Body.Close()
 
 	user, err := cfg.db.CreateUser(r.Context(), userData.Email)
 	if err != nil {
